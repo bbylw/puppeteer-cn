@@ -1035,3 +1035,55 @@ html.js .reveal.is-in {
   font-size: 16px;
   color: var(--color-muted);
 }
+
+/* ---------- back to top ---------- */
+
+.to-top {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  background: var(--color-accent);
+  color: var(--color-ink);
+  border-radius: 0;
+  opacity: 0;
+  transform: translate3d(0, 10px, 0);
+  pointer-events: none;
+  transition:
+    opacity 220ms var(--ease-out),
+    transform 220ms var(--ease-out),
+    background-color 160ms var(--ease-out),
+    color 160ms var(--ease-out);
+}
+
+.to-top.is-visible {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.to-top:hover {
+  background: #ffa733;
+}
+
+.to-top:active {
+  transform: translate3d(0, 1px, 0);
+}
+
+@media (min-width: 768px) {
+  .to-top {
+    right: 28px;
+    bottom: 28px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .to-top {
+    transition: opacity 120ms linear;
+    transform: none;
+  }
+}
