@@ -15,7 +15,7 @@ const entries = (await getCollection('docs')).sort((a, b) => a.data.order - b.da
         入门
       </h1>
       <p class="max-w-[40ch] text-[16px] leading-[1.6] text-muted md:col-span-5">
-        官方的 Introduction 分类，四篇。从“它是什么”到“跑起来需要什么”，按顺序读完大约二十分钟。
+        官方 Introduction 分类，共四篇。按顺序读完大约二十分钟。
       </p>
     </header>
 
@@ -29,13 +29,6 @@ const entries = (await getCollection('docs')).sort((a, b) => a.data.order - b.da
             <p class="doc-index-desc reveal" style={`--reveal-delay:${index * 60 + 40}ms`}>
               {entry.data.description}
             </p>
-            <span
-              class="doc-index-arrow reveal"
-              style={`--reveal-delay:${index * 60 + 80}ms`}
-              aria-hidden="true"
-            >
-              →
-            </span>
           </a>
         ))
       }
@@ -52,10 +45,10 @@ const entries = (await getCollection('docs')).sort((a, b) => a.data.order - b.da
         <div class="mt-7 flex flex-wrap gap-x-10 gap-y-3">
           <a href="/faq" class="link-underline text-[15px] font-medium">常见问题</a>
           <a href={site.links.api} target="_blank" rel="noreferrer" class="link-underline text-[15px] font-medium">
-            API 参考 ↗
+            API 参考
           </a>
           <a href={site.links.examples} target="_blank" rel="noreferrer" class="link-underline text-[15px] font-medium">
-            官方示例 ↗
+            官方示例
           </a>
         </div>
       </div>
@@ -66,7 +59,7 @@ const entries = (await getCollection('docs')).sort((a, b) => a.data.order - b.da
 <style>
   .doc-index-row {
     display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 5fr) auto;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     gap: 24px;
     align-items: center;
     padding: 30px 20px 30px 0;
@@ -93,20 +86,9 @@ const entries = (await getCollection('docs')).sort((a, b) => a.data.order - b.da
     color: var(--color-ink-soft);
   }
 
-  .doc-index-arrow {
-    font-size: 20px;
-    color: var(--color-muted);
-    transition: transform 200ms var(--ease-out);
-  }
-
-  .doc-index-row:hover .doc-index-arrow {
-    transform: translateX(6px);
-    color: var(--color-ink);
-  }
-
   @media (max-width: 767px) {
     .doc-index-row {
-      grid-template-columns: 1fr auto;
+      grid-template-columns: 1fr;
       row-gap: 10px;
       padding: 24px 0;
     }

@@ -49,12 +49,11 @@ const current = Astro.url.pathname;
         target="_blank"
         rel="noreferrer"
         class:list={[
-          'u-small link-plain inline-flex items-center gap-1',
+          'u-small link-plain',
           dark ? 'text-white/80 hover:text-white' : 'text-ink/75 hover:text-ink',
         ]}
       >
         GitHub
-        <span aria-hidden="true" class="text-[13px]">↗</span>
       </a>
     </nav>
 
@@ -85,7 +84,7 @@ const current = Astro.url.pathname;
             ))
           }
           <a href={site.links.github} target="_blank" rel="noreferrer" class="u-small px-4 py-3">
-            GitHub ↗
+            GitHub
           </a>
         </nav>
       </details>
