@@ -12,6 +12,12 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content, headings } = await render(entry);
+
+const body = entry.body ?? '';
+const hanzi = body.match(/[\u4e00-\u9fa5]/g)?.length ?? 0;
+const latin = body.match(/[A-Za-z0-9_]+/g)?.length ?? 0;
+const words = hanzi + latin;
+const minutes = Math.max(1, Math.round(words / 350));
 ---
 
 <Doc
@@ -19,6 +25,8 @@ const { Content, headings } = await render(entry);
   description={entry.data.description}
   headings={headings}
   source={entry.data.source}
+  words={words}
+  minutes={minutes}
 >
   <Content />
 </Doc>

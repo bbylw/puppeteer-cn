@@ -105,11 +105,34 @@ const searchItems = [
         skip.style.left = '-9999px';
       });
 
+      const LANG_LABEL: Record<string, string> = {
+        ts: 'TypeScript',
+        typescript: 'TypeScript',
+        js: 'JavaScript',
+        javascript: 'JavaScript',
+        bash: 'Shell',
+        sh: 'Shell',
+        shell: 'Shell',
+        json: 'JSON',
+        md: 'Markdown',
+        html: 'HTML',
+        css: 'CSS',
+      };
+
       document.querySelectorAll<HTMLPreElement>('pre.astro-code').forEach((pre) => {
         const wrap = document.createElement('div');
         wrap.className = 'code-wrap';
         pre.replaceWith(wrap);
         wrap.appendChild(pre);
+
+        const head = document.createElement('div');
+        head.className = 'code-head';
+
+        const lang = pre.dataset.language ?? '';
+        const label = document.createElement('span');
+        label.className = 'code-lang';
+        label.textContent = LANG_LABEL[lang.toLowerCase()] ?? (lang ? lang.toUpperCase() : 'Code');
+        head.appendChild(label);
 
         const button = document.createElement('button');
         button.type = 'button';
@@ -130,7 +153,8 @@ const searchItems = [
           }, 1600);
         });
 
-        wrap.appendChild(button);
+        head.appendChild(button);
+        wrap.insertBefore(head, pre);
       });
     </script>
   </body>

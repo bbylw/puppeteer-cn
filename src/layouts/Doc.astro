@@ -13,9 +13,11 @@ interface Props {
   description: string;
   headings?: Heading[];
   source?: string;
+  words?: number;
+  minutes?: number;
 }
 
-const { title, description, headings = [], source } = Astro.props;
+const { title, description, headings = [], source, words = 0, minutes = 0 } = Astro.props;
 const entries = (await getCollection('docs')).sort((a, b) => a.data.order - b.data.order);
 const current = Astro.url.pathname;
 const index = entries.findIndex((entry) => current === `/docs/${entry.id}`);
@@ -25,9 +27,11 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
 <Base title={title} description={description}>
+  <div class="read-progress" aria-hidden="true"><i></i></div>
+
   <div class="shell pt-10 pb-[clamp(72px,9vw,140px)] md:pt-14">
     <div class="grid gap-x-10 gap-y-12 md:grid-cols-12">
-      <aside class="hidden md:col-span-3 md:block">
+      <aside class="doc-sidebar hidden md:col-span-3 md:block">
         <div class="md:sticky md:top-8">
           <p class="u-small text-muted">入门</p>
           <nav class="mt-4 flex flex-col" aria-label="文档目录">
@@ -72,6 +76,13 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
             {title}
           </h1>
           <p class="mt-6 max-w-[52ch] text-[18px] leading-[1.6] text-ink/80">{description}</p>
+          {
+            minutes > 0 && (
+              <p class="doc-meta u-small mt-5">
+                约 {minutes} 分钟 · {words.toLocaleString('zh-CN')} 字
+              </p>
+            )
+          }
         </header>
 
         <details class="mobile-toc mt-8 md:hidden">
@@ -172,7 +183,83 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
   </div>
 </Base>
 
+<script>
+  const bar = document.querySelector<HTMLElement>('.read-progress');
+  if (bar) {
+    const paint = () => {
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - doc.clientHeight;
+      const ratio = max > 0 ? doc.scrollTop / max : 0;
+      bar.style.setProperty('--p', `${Math.min(100, Math.max(0, ratio * 100))}%`);
+      bar.classList.toggle('is-visible', doc.scrollTop > 120);
+    };
+    window.addEventListener('scroll', paint, { passive: true });
+    window.addEventListener('resize', paint);
+    paint();
+  }
+
+  const tocLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('.toc-link'));
+  if (tocLinks.length) {
+    const pairs = tocLinks
+      .map((link) => {
+        const id = decodeURIComponent((link.getAttribute('href') ?? '').replace('#', ''));
+        const target = id ? document.getElementById(id) : null;
+        return target ? { link, target } : null;
+      })
+      .filter((pair): pair is { link: HTMLAnchorElement; target: HTMLElement } => pair !== null);
+
+    const spy = () => {
+      let active = pairs[0];
+      for (const pair of pairs) {
+        if (pair.target.getBoundingClientRect().top < 160) active = pair;
+      }
+      pairs.forEach((pair) => pair.link.classList.toggle('is-active', pair === active));
+    };
+
+    window.addEventListener('scroll', spy, { passive: true });
+    spy();
+  }
+
+  document.querySelectorAll<HTMLAnchorElement>('.mobile-toc a').forEach((link) => {
+    link.addEventListener('click', () => {
+      link.closest('details')?.removeAttribute('open');
+    });
+  });
+</script>
+
 <style>
+  .read-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 220ms var(--ease-out);
+  }
+
+  .read-progress.is-visible {
+    opacity: 1;
+  }
+
+  .read-progress i {
+    display: block;
+    height: 100%;
+    width: var(--p, 0%);
+    background: var(--color-accent);
+    transition: width 90ms linear;
+  }
+
+  .doc-meta {
+    color: var(--color-muted);
+  }
+
+  .doc-sidebar {
+    padding-right: 26px;
+  }
+
   .doc-nav-item {
     padding: 9px 0 9px 14px;
     margin-left: -14px;
@@ -222,5 +309,13 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 
   .toc-link:hover {
     color: var(--color-ink);
+  }
+
+  .toc-link.is-active {
+    color: var(--color-ink);
+    font-weight: 500;
+    background: var(--color-surface);
+    padding: 3px 8px;
+    margin: -3px -8px;
   }
 </style>
