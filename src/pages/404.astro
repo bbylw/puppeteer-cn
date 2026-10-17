@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="页面不存在" description="这个地址没有内容。">
+  <div class="shell flex min-h-[70svh] flex-col justify-center py-20">
+    <h1 class="reveal text-[clamp(2.4rem,1.4rem+5vw,6rem)] font-medium leading-[0.92] tracking-[-0.04em]">
+      这个地址上没有页面
+    </h1>
+    <p class="reveal mt-6 max-w-[44ch] text-[16px] leading-[1.6] text-ink-soft">
+      可能是链接拼错了，或者那篇还没翻译完。从文档目录重新找一遍最稳。
+    </p>
+    <div class="reveal mt-10 flex flex-wrap gap-x-8 gap-y-3">
+      <a href="/docs" class="btn">去文档目录</a>
+      <a href="/" class="link-underline self-center text-[15px]">回到首页</a>
+    </div>
+  </div>
+</Base>

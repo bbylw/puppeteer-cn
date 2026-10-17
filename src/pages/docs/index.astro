@@ -1,0 +1,118 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { site } from '../../data/site';
+
+const entries = (await getCollection('docs')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Base title="文档" description="Puppeteer 中文文档的入门章节：它是什么、怎么安装、怎么跑起来、需要什么环境。">
+  <div class="shell pt-12 pb-[clamp(72px,9vw,140px)] md:pt-20">
+    <header class="reveal grid gap-8 md:grid-cols-12 md:items-end">
+      <h1
+        class="text-[clamp(2.8rem,1.4rem+6vw,7rem)] font-medium leading-[0.9] tracking-[-0.04em] md:col-span-7"
+      >
+        入门
+      </h1>
+      <p class="max-w-[40ch] text-[16px] leading-[1.6] text-muted md:col-span-5">
+        官方的 Introduction 分类，四篇。从“它是什么”到“跑起来需要什么”，按顺序读完大约二十分钟。
+      </p>
+    </header>
+
+    <div class="mt-[clamp(48px,7vw,96px)]">
+      {
+        entries.map((entry, index) => (
+          <a href={`/docs/${entry.id}`} class="doc-index-row">
+            <h2 class="doc-index-title reveal" style={`--reveal-delay:${index * 60}ms`}>
+              {entry.data.title}
+            </h2>
+            <p class="doc-index-desc reveal" style={`--reveal-delay:${index * 60 + 40}ms`}>
+              {entry.data.description}
+            </p>
+            <span
+              class="doc-index-arrow reveal"
+              style={`--reveal-delay:${index * 60 + 80}ms`}
+              aria-hidden="true"
+            >
+              →
+            </span>
+          </a>
+        ))
+      }
+    </div>
+
+    <div class="reveal mt-[clamp(56px,8vw,110px)] grid gap-10 md:grid-cols-12">
+      <div class="md:col-span-4">
+        <h2 class="text-[19px] font-medium tracking-[-0.01em]">还没读完？</h2>
+      </div>
+      <div class="md:col-span-8">
+        <p class="max-w-[52ch] text-[16px] leading-[1.7] text-ink">
+          上面四篇只是 Introduction。完整的指南、API 与示例在官方站上，这个站会按同样的结构继续往下译。
+        </p>
+        <div class="mt-7 flex flex-wrap gap-x-10 gap-y-3">
+          <a href="/faq" class="link-underline text-[15px] font-medium">常见问题</a>
+          <a href={site.links.api} target="_blank" rel="noreferrer" class="link-underline text-[15px] font-medium">
+            API 参考 ↗
+          </a>
+          <a href={site.links.examples} target="_blank" rel="noreferrer" class="link-underline text-[15px] font-medium">
+            官方示例 ↗
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .doc-index-row {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 5fr) auto;
+    gap: 24px;
+    align-items: center;
+    padding: 30px 20px 30px 0;
+    transition:
+      background-color 200ms var(--ease-out),
+      padding 200ms var(--ease-out);
+  }
+
+  .doc-index-row:hover {
+    background: var(--color-surface);
+    padding-left: 20px;
+  }
+
+  .doc-index-title {
+    font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.4rem);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .doc-index-desc {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--color-ink-soft);
+  }
+
+  .doc-index-arrow {
+    font-size: 20px;
+    color: var(--color-muted);
+    transition: transform 200ms var(--ease-out);
+  }
+
+  .doc-index-row:hover .doc-index-arrow {
+    transform: translateX(6px);
+    color: var(--color-ink);
+  }
+
+  @media (max-width: 767px) {
+    .doc-index-row {
+      grid-template-columns: 1fr auto;
+      row-gap: 10px;
+      padding: 24px 0;
+    }
+    .doc-index-desc {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+</style>

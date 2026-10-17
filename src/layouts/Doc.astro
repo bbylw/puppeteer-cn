@@ -1,0 +1,226 @@
+---
+import Base from './Base.astro';
+import { getCollection } from 'astro:content';
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  headings?: Heading[];
+  source?: string;
+}
+
+const { title, description, headings = [], source } = Astro.props;
+const entries = (await getCollection('docs')).sort((a, b) => a.data.order - b.data.order);
+const current = Astro.url.pathname;
+const index = entries.findIndex((entry) => current === `/docs/${entry.id}`);
+const prev = index > 0 ? entries[index - 1] : undefined;
+const next = index >= 0 && index < entries.length - 1 ? entries[index + 1] : undefined;
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+<Base title={title} description={description}>
+  <div class="shell pt-10 pb-[clamp(72px,9vw,140px)] md:pt-14">
+    <div class="grid gap-x-10 gap-y-12 md:grid-cols-12">
+      <aside class="hidden md:col-span-3 md:block">
+        <div class="md:sticky md:top-8">
+          <p class="u-small text-muted">入门</p>
+          <nav class="mt-4 flex flex-col" aria-label="文档目录">
+            {
+              entries.map((entry) => {
+                const href = `/docs/${entry.id}`;
+                const active = current === href;
+                return (
+                  <a
+                    href={href}
+                    class:list={['doc-nav-item', active && 'is-active']}
+                    aria-current={active ? 'page' : undefined}
+                  >
+                    {entry.data.title}
+                  </a>
+                );
+              })
+            }
+          </nav>
+          <p class="u-small mt-8 text-muted">更多</p>
+          <nav class="mt-4 flex flex-col" aria-label="其他页面">
+            <a
+              href="/faq"
+              class:list={['doc-nav-item', current === '/faq' && 'is-active']}
+              aria-current={current === '/faq' ? 'page' : undefined}>常见问题</a
+            >
+            <a href="https://pptr.dev/api" target="_blank" rel="noreferrer" class="doc-nav-item">
+              API 参考 ↗
+            </a>
+            <a href="https://pptr.dev/webdriver-bidi" target="_blank" rel="noreferrer" class="doc-nav-item">
+              WebDriver BiDi ↗
+            </a>
+          </nav>
+        </div>
+      </aside>
+
+      <article class="min-w-0 md:col-span-7">
+        <header>
+          <h1
+            class="max-w-[14ch] text-[clamp(2.4rem,1.6rem+3.4vw,4.2rem)] font-medium leading-[0.98] tracking-[-0.035em]"
+          >
+            {title}
+          </h1>
+          <p class="mt-6 max-w-[52ch] text-[18px] leading-[1.6] text-ink/80">{description}</p>
+        </header>
+
+        <details class="mobile-toc mt-8 md:hidden">
+          <summary class="u-small flex items-center justify-between bg-surface px-5 py-4">
+            <span>本篇目录与全部章节</span>
+            <span aria-hidden="true">＋</span>
+          </summary>
+          <div class="bg-surface px-5 pb-4">
+            <nav class="flex flex-col" aria-label="移动端文档目录">
+              {
+                entries.map((entry) => (
+                  <a href={`/docs/${entry.id}`} class="doc-nav-item">
+                    {entry.data.title}
+                  </a>
+                ))
+              }
+              <a href="/faq" class="doc-nav-item">
+                常见问题
+              </a>
+            </nav>
+            {
+              toc.length > 0 && (
+                <div class="mt-5">
+                  <p class="u-small text-muted">本页</p>
+                  <ul class="mt-2 flex flex-col gap-2">
+                    {toc.map((heading) => (
+                      <li>
+                        <a href={`#${heading.slug}`} class="toc-link">
+                          {heading.text}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )
+            }
+          </div>
+        </details>
+
+        <div class="doc-body mt-12 md:mt-16">
+          <slot />
+        </div>
+
+        <nav class="mt-20 grid gap-4 md:grid-cols-2" aria-label="章节导航">
+          {
+            prev && (
+              <a href={`/docs/${prev.id}`} class="doc-pager">
+                <span class="u-small text-muted">上一篇</span>
+                <span class="mt-1.5 text-[18px] font-medium leading-tight">{prev.data.title}</span>
+              </a>
+            )
+          }
+          {
+            next && (
+              <a href={`/docs/${next.id}`} class="doc-pager md:text-right">
+                <span class="u-small text-muted">下一篇</span>
+                <span class="mt-1.5 text-[18px] font-medium leading-tight">{next.data.title}</span>
+              </a>
+            )
+          }
+        </nav>
+
+        {
+          source && (
+            <p class="u-small mt-14 text-muted">
+              译自
+              <a class="link-underline" href={source} target="_blank" rel="noreferrer">
+                {source.replace('https://', '')}
+              </a>
+              ，对应 Puppeteer v25.14.0
+            </p>
+          )
+        }
+      </article>
+
+      <aside class="hidden md:col-span-2 md:block">
+        {
+          toc.length > 0 && (
+            <div class="sticky top-8">
+              <p class="u-small text-muted">本页</p>
+              <ul class="mt-4 flex flex-col gap-2.5">
+                {toc.map((heading) => (
+                  <li>
+                    <a
+                      href={`#${heading.slug}`}
+                      class:list={['toc-link', heading.depth === 3 && 'pl-3']}
+                    >
+                      {heading.text}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </aside>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .doc-nav-item {
+    padding: 9px 0 9px 14px;
+    margin-left: -14px;
+    border-left: 2px solid transparent;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--color-muted);
+    transition:
+      color 150ms var(--ease-out),
+      border-color 150ms var(--ease-out);
+  }
+
+  .doc-nav-item:hover {
+    color: var(--color-ink);
+  }
+
+  .doc-nav-item.is-active {
+    color: var(--color-ink);
+    font-weight: 500;
+    border-left-color: var(--color-accent);
+  }
+
+  .doc-pager {
+    display: flex;
+    flex-direction: column;
+    padding: 22px 24px;
+    background: var(--color-surface);
+    transition: background-color 180ms var(--ease-out);
+  }
+
+  .doc-pager:hover {
+    background: var(--color-field-2);
+  }
+
+  .mobile-toc[open] summary span:last-child {
+    display: inline-block;
+    transform: rotate(45deg);
+  }
+
+  .toc-link {
+    display: block;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--color-muted);
+    transition: color 150ms var(--ease-out);
+  }
+
+  .toc-link:hover {
+    color: var(--color-ink);
+  }
+</style>

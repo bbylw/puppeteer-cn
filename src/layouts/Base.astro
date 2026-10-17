@@ -1,0 +1,137 @@
+---
+import '../styles/global.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { getCollection } from 'astro:content';
+import { faq } from '../data/faq';
+
+interface Props {
+  title: string;
+  description: string;
+  tone?: 'light' | 'dark';
+  noFooter?: boolean;
+}
+
+const { title, description, tone = 'light', noFooter = false } = Astro.props;
+const fullTitle = title === 'Puppeteer 中文文档' ? title : `${title} — Puppeteer 中文文档`;
+
+const docs = (await getCollection('docs')).sort((a, b) => a.data.order - b.data.order);
+const searchItems = [
+  ...docs.map((entry) => ({
+    title: entry.data.title,
+    href: `/docs/${entry.id}`,
+    kind: '文档',
+    text: entry.data.description,
+  })),
+  ...faq.map((item) => ({
+    title: item.question,
+    href: `/faq#${item.id}`,
+    kind: '问答',
+    text: item.answer.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' '),
+  })),
+];
+---
+
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content={tone === 'dark' ? '#05070a' : '#ffffff'} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href="/fonts/clash-grotesk-500.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <script is:inline>
+      document.documentElement.classList.remove('no-js');
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="skip-link u-small"
+      style="position:absolute;left:-9999px;top:0;z-index:100;background:var(--color-accent);color:var(--color-ink);padding:12px 18px"
+      >跳到主要内容</a
+    >
+    <SiteHeader tone={tone} searchItems={searchItems} />
+    <main id="main">
+      <slot />
+    </main>
+    {!noFooter && <SiteFooter />}
+    <script>
+      const docBody = document.querySelector<HTMLElement>('.doc-body');
+      if (docBody) {
+        Array.from(docBody.children).forEach((child, index) => {
+          const el = child as HTMLElement;
+          el.classList.add('reveal');
+          el.style.setProperty('--reveal-delay', `${Math.min(index, 5) * 40}ms`);
+        });
+      }
+
+      const targets = document.querySelectorAll<HTMLElement>('.reveal');
+      if ('IntersectionObserver' in window && targets.length) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-in');
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -10% 0px', threshold: 0.08 }
+        );
+        targets.forEach((el) => io.observe(el));
+      } else {
+        targets.forEach((el) => el.classList.add('is-in'));
+      }
+
+      const skip = document.querySelector<HTMLAnchorElement>('.skip-link');
+      skip?.addEventListener('focus', () => {
+        skip.style.left = '12px';
+        skip.style.top = '12px';
+      });
+      skip?.addEventListener('blur', () => {
+        skip.style.left = '-9999px';
+      });
+
+      document.querySelectorAll<HTMLPreElement>('pre.astro-code').forEach((pre) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'code-wrap';
+        pre.replaceWith(wrap);
+        wrap.appendChild(pre);
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'code-copy';
+        button.textContent = '复制';
+        button.setAttribute('aria-label', '复制代码');
+
+        button.addEventListener('click', async () => {
+          const text = pre.textContent ?? '';
+          try {
+            await navigator.clipboard.writeText(text);
+            button.textContent = '已复制';
+          } catch {
+            button.textContent = '复制失败';
+          }
+          window.setTimeout(() => {
+            button.textContent = '复制';
+          }, 1600);
+        });
+
+        wrap.appendChild(button);
+      });
+    </script>
+  </body>
+</html>
