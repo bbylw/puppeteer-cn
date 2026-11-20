@@ -63,7 +63,7 @@ export const faq: FaqItem[] = [
     id: 'trusted',
     question: '“可信”与“不可信”输入事件有什么区别？',
     answer:
-      '<p>在浏览器中，输入事件可以分为两大类：可信（trusted）与不可信（untrusted）。</p><ul><li><strong>可信事件</strong>：用户与页面交互产生的事件，例如使用鼠标或键盘。</li><li><strong>不可信事件</strong>：由 Web API 生成的事件，例如 <code>document.createEvent</code> 或 <code>element.click()</code>。</li></ul><p>网站可以区分这两类事件：使用 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/isTrusted" target="_blank" rel="noreferrer"><code>Event.isTrusted</code></a> 事件标志；或者嗅探伴随事件——例如每个可信的 <code>click</code> 事件之前都会有 <code>mousedown</code> 与 <code>mouseup</code>。</p><p>对自动化而言，生成可信事件很重要。<strong>Puppeteer 生成的所有输入事件都是可信的，并会触发正确的伴随事件。</strong>如果出于某种原因需要不可信事件，总可以进入页面上下文，用 <code>page.evaluate</code> 生成一个假事件：</p><pre class="faq-code"><code>await page.evaluate(() =&gt; {\n  document.querySelector(\'button[type=submit]\').click();\n});</code></pre>',
+      '<p>在浏览器中，输入事件可以分为两大类：可信（trusted）与不可信（untrusted）。</p><ul><li><strong>可信事件</strong>：用户与页面交互产生的事件，例如使用鼠标或键盘。</li><li><strong>不可信事件</strong>：由 Web API 生成的事件，例如 <code>document.createEvent</code> 或 <code>element.click()</code>。</li></ul><p>网站可以区分这两类事件：使用 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/isTrusted" target="_blank" rel="noreferrer"><code>Event.isTrusted</code></a> 事件标志；或者嗅探伴随事件——例如每个可信的 <code>click</code> 事件之前都会有 <code>mousedown</code> 与 <code>mouseup</code>。</p><p>对自动化而言，生成可信事件很重要。<strong>Puppeteer 生成的所有输入事件都是可信的，并会触发正确的伴随事件。</strong>如果出于某种原因需要不可信事件，总可以进入页面上下文，用 <code>page.evaluate</code> 生成一个假事件：</p><pre class="faq-code" tabindex="0" role="region" aria-label="示例代码"><code>await page.evaluate(() =&gt; {\n  document.querySelector(\'button[type=submit]\').click();\n});</code></pre>',
   },
   {
     id: 'media',

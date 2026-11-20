@@ -7,34 +7,67 @@ import type { SearchItem } from '@/lib/search-items';
 type Props = { items: SearchItem[] };
 
 export default function SearchDialog({ items }: Props) {
-  const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState('');
+  const dialogRef = useRef<HTMLDialogElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const [query, setQuery] = useState('');
 
+  const openDialog = () => {
+    const dialog = dialogRef.current;
+    if (dialog && !dialog.open) {
+      dialog.showModal();
+      inputRef.current?.focus();
+    }
+  };
+
+  const closeDialog = () => dialogRef.current?.close();
+
+  // ⌘K / Ctrl+K 开关；Esc 与焦点圈定由原生 <dialog> 的模态态负责
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
-        setOpen((prev) => !prev);
+        const dialog = dialogRef.current;
+        if (!dialog) return;
+        if (dialog.open) {
+          dialog.close();
+        } else {
+          dialog.showModal();
+          inputRef.current?.focus();
+        }
       }
-      if (event.key === 'Escape') setOpen(false);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  // closedby="any" 的渐进增强回退（Safari 尚不支持）：
+  // 用指针位置判断“点在对话框外”，按下与抬起都在外部才关闭，避免文本选择拖拽误关。
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-      window.setTimeout(() => inputRef.current?.focus(), 30);
-    } else {
-      document.body.style.overflow = '';
-      setQuery('');
-    }
-    return () => {
-      document.body.style.overflow = '';
+    const dialog = dialogRef.current;
+    if (!dialog || 'closedBy' in HTMLDialogElement.prototype) return;
+    const outside = (event: PointerEvent) => {
+      const rect = dialog.getBoundingClientRect();
+      return (
+        event.clientX < rect.left ||
+        event.clientX > rect.right ||
+        event.clientY < rect.top ||
+        event.clientY > rect.bottom
+      );
     };
-  }, [open]);
+    let pressedOutside = false;
+    const onDown = (event: PointerEvent) => {
+      pressedOutside = outside(event);
+    };
+    const onUp = (event: PointerEvent) => {
+      if (pressedOutside && outside(event)) dialog.close();
+    };
+    dialog.addEventListener('pointerdown', onDown);
+    dialog.addEventListener('pointerup', onUp);
+    return () => {
+      dialog.removeEventListener('pointerdown', onDown);
+      dialog.removeEventListener('pointerup', onUp);
+    };
+  }, []);
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -52,7 +85,7 @@ export default function SearchDialog({ items }: Props) {
       <button
         type="button"
         className="search-trigger"
-        onClick={() => setOpen(true)}
+        onClick={openDialog}
         aria-label="搜索文档"
       >
         <span className="search-icon" aria-hidden="true">
@@ -65,47 +98,46 @@ export default function SearchDialog({ items }: Props) {
         <kbd>⌘K</kbd>
       </button>
 
-      {open && (
-        <div className="search-overlay" role="dialog" aria-modal="true" aria-label="搜索">
-          <button
-            type="button"
-            className="search-backdrop"
-            aria-label="关闭搜索"
-            onClick={() => setOpen(false)}
-          />
-          <div className="search-panel">
-            <div className="search-field">
-              <input
-                ref={inputRef}
-                type="search"
-                value={query}
-                placeholder="搜索文档与问题"
-                onChange={(event) => setQuery(event.currentTarget.value)}
-                aria-label="搜索关键词"
-              />
-              <button type="button" onClick={() => setOpen(false)} aria-label="关闭">
-                关闭
-              </button>
-            </div>
-
-            <ul className="search-results">
-              {results.map((item) => (
-                <li key={item.href + item.title}>
-                  <Link href={item.href} onClick={() => setOpen(false)}>
-                    <span className="search-kind">{item.kind}</span>
-                    <span className="search-title">{item.title}</span>
-                  </Link>
-                </li>
-              ))}
-              {results.length === 0 && (
-                <li className="search-empty">
-                  没有匹配「{query}」的内容。换一个词试试。
-                </li>
-              )}
-            </ul>
+      <dialog
+        ref={dialogRef}
+        className="search-dialog"
+        closedby="any"
+        aria-label="搜索"
+        onClose={() => setQuery('')}
+      >
+        <search>
+          <div className="search-field">
+            <input
+              ref={inputRef}
+              type="search"
+              value={query}
+              placeholder="搜索文档与问题"
+              onChange={(event) => setQuery(event.currentTarget.value)}
+              aria-label="搜索关键词"
+              autoFocus
+            />
+            <button type="button" onClick={closeDialog}>
+              关闭
+            </button>
           </div>
-        </div>
-      )}
+
+          <ul className="search-results" role="list">
+            {results.map((item) => (
+              <li key={item.href + item.title}>
+                <Link href={item.href} onClick={closeDialog}>
+                  <span className="search-kind">{item.kind}</span>
+                  <span className="search-title">{item.title}</span>
+                </Link>
+              </li>
+            ))}
+            {results.length === 0 && (
+              <li className="search-empty">
+                没有匹配「{query}」的内容。换一个词试试。
+              </li>
+            )}
+          </ul>
+        </search>
+      </dialog>
     </>
   );
 }

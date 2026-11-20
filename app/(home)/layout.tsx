@@ -37,11 +37,13 @@ export default function HomeLayout({ children }: { children: ReactNode }) {
         }}
       />
 
+      {/* 滚动哨兵：不支持 scroll-state 容器查询的浏览器用 IO 观察它来显隐回到顶部按钮 */}
+      <div className="scroll-sentinel" data-scroll-sentinel="" aria-hidden="true" />
       <a href="#main" className="skip-link u-small" style={skipLinkStyle}>
         跳到主要内容
       </a>
       <SiteHeader items={searchItems} />
-      <main id="main">{children}</main>
+      <main id="main" tabIndex={-1}>{children}</main>
       <SiteFooter />
 
       <button
@@ -49,7 +51,6 @@ export default function HomeLayout({ children }: { children: ReactNode }) {
         className="to-top"
         data-to-top=""
         aria-label="回到顶部"
-        tabIndex={-1}
       >
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
           <path
