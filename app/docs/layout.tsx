@@ -8,11 +8,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     <DocsLayout
       tree={getDocsTree()}
       nav={{
-        title: (
-          <span className="font-semibold">
-            Puppeteer <span className="text-fd-muted-foreground">中文文档</span>
-          </span>
-        ),
+        title: <span className="font-semibold">Puppeteer</span>,
         url: '/',
       }}
       links={[
