@@ -69,7 +69,7 @@ export const faq: FaqItem[] = [
     id: 'media',
     question: 'Puppeteer 支持媒体与音频播放吗？',
     answer:
-      '<p>Puppeteer 默认使用 <a href="https://developer.chrome.com/blog/chrome-for-testing/" target="_blank" rel="noreferrer">Chrome for Testing</a> 二进制，从 <a href="https://chromiumdash.appspot.com/commit/12d607016c31ea13579e897740c765be189ed6eb" target="_blank" rel="noreferrer">M120</a> 起它们自带专有编解码器支持。</p>',
+      '<p>Puppeteer 默认使用 <a href="https://developer.chrome.com/docs/automation-and-testing/chrome-for-testing" target="_blank" rel="noreferrer">Chrome for Testing</a> 二进制，从 <a href="https://chromiumdash.appspot.com/commit/12d607016c31ea13579e897740c765be189ed6eb" target="_blank" rel="noreferrer">M120</a> 起它们自带专有编解码器支持。</p>',
   },
   {
     id: 'help',
