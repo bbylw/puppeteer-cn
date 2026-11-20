@@ -19,7 +19,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     <html lang="zh-CN" suppressHydrationWarning>
       <body>
         <RootProvider
-          theme={{ enabled: false }}
+          theme={{ enabled: true, defaultTheme: 'system' }}
           search={{ options: { type: 'static', api: '/api/search' } }}
         >
           {children}
