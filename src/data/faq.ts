@@ -9,13 +9,13 @@ export const faq: FaqItem[] = [
     id: 'who-maintains',
     question: '谁在维护 Puppeteer？',
     answer:
-      '<p>Chrome Browser Automation 团队维护这个库，不过我们也很欢迎你的帮助与专业经验！见<a href="https://pptr.dev/contributing" target="_blank" rel="noreferrer">贡献指南</a>。</p>',
+      '<p>Chrome Browser Automation 团队维护这个库，不过我们也很欢迎你的帮助与专业经验！见<a href="/docs/contributing">贡献指南</a>。</p>',
   },
   {
     id: 'cross-browser',
     question: '跨浏览器支持现在是什么状态？',
     answer:
-      '<p>从 Puppeteer v23.0.0 起，Puppeteer 同时支持 Chrome 与 Firefox。</p><p>自动化 Chrome 时，Puppeteer 默认使用 Chrome DevTools Protocol（CDP），但也可以用 WebDriver BiDi 来驱动；自动化 Firefox 时默认使用 WebDriver BiDi。API 支持上的细微差异，见 <a href="https://pptr.dev/webdriver-bidi" target="_blank" rel="noreferrer">WebDriver BiDi 指南</a>。</p>',
+      '<p>从 Puppeteer v23.0.0 起，Puppeteer 同时支持 Chrome 与 Firefox。</p><p>自动化 Chrome 时，Puppeteer 默认使用 Chrome DevTools Protocol（CDP），但也可以用 WebDriver BiDi 来驱动；自动化 Firefox 时默认使用 WebDriver BiDi。API 支持上的细微差异，见 <a href="/docs/webdriver-bidi">WebDriver BiDi 指南</a>。</p>',
   },
   {
     id: 'bidi',
@@ -39,7 +39,7 @@ export const faq: FaqItem[] = [
     id: 'selenium',
     question: 'Puppeteer 能替代 Selenium 吗？',
     answer:
-      '<p>Puppeteer 是一个基于 Node.js 的参考实现，演示如何用 CDP 与 WebDriver BiDi 自动化浏览器——而 Selenium 项目也在为同一套 Web 标准做贡献。</p><p>Selenium 项目在多个方面超出了 Puppeteer 的范围：它为 JavaScript 之外的语言提供绑定，还提供像 Selenium Grid 这样大规模编排自动化的工具。这两者都超出了 Puppeteer 的职责范围。</p><p>有一些社区项目在核心之外为 Puppeteer 增加能力，让测试等事情更方便，例如 <a href="https://github.com/smooth-code/jest-puppeteer" target="_blank" rel="noreferrer">jest-puppeteer</a> 或 <a href="https://pptr.dev/integrations/ng-schematics" target="_blank" rel="noreferrer">Puppeteer 的 Angular 集成</a>。</p>',
+      '<p>Puppeteer 是一个基于 Node.js 的参考实现，演示如何用 CDP 与 WebDriver BiDi 自动化浏览器——而 Selenium 项目也在为同一套 Web 标准做贡献。</p><p>Selenium 项目在多个方面超出了 Puppeteer 的范围：它为 JavaScript 之外的语言提供绑定，还提供像 Selenium Grid 这样大规模编排自动化的工具。这两者都超出了 Puppeteer 的职责范围。</p><p>有一些社区项目在核心之外为 Puppeteer 增加能力，让测试等事情更方便，例如 <a href="https://github.com/smooth-code/jest-puppeteer" target="_blank" rel="noreferrer">jest-puppeteer</a> 或 <a href="/docs/ng-schematics">Puppeteer 的 Angular 集成</a>。</p>',
   },
   {
     id: 'version-mismatch',
@@ -75,7 +75,7 @@ export const faq: FaqItem[] = [
     id: 'help',
     question: '我在测试环境里安装或运行 Puppeteer 遇到问题，该去哪里找帮助？',
     answer:
-      '<p>我们有一份针对各种操作系统的<a href="https://pptr.dev/troubleshooting" target="_blank" rel="noreferrer">故障排查指南</a>，列出了所需的依赖。</p>',
+      '<p>我们有一份针对各种操作系统的<a href="/docs/troubleshooting">故障排查指南</a>，列出了所需的依赖。</p>',
   },
   {
     id: 'more',

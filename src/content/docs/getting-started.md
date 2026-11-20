@@ -2,6 +2,7 @@
 title: 快速开始
 description: 启动或连接一个浏览器、新建页面，然后用 Puppeteer 的 API 操作它们：一个从打开页面到打印标题的完整示例。
 order: 3
+category: introduction
 source: https://pptr.dev/guides/getting-started
 summary:
   - 四个动作：launch、newPage、操作、close
@@ -47,4 +48,4 @@ console.log('The title of this blog post is "%s".', fullTitle);
 await browser.close();
 ```
 
-想了解更深入的用法，请查阅 [文档](https://pptr.dev/docs) 与 [示例](https://github.com/puppeteer/puppeteer/tree/main/examples)。
+想了解更深入的用法，请查阅 [文档](/docs) 与 [示例](https://github.com/puppeteer/puppeteer/tree/main/examples)。
