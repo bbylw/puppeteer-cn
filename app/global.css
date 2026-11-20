@@ -58,6 +58,8 @@
   --page-x: 20px;
   --radius: 0px;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  /* 允许 block-size: auto 参与过渡（FAQ 手风展开动画），不支持的浏览器忽略 */
+  interpolate-size: allow-keywords;
 }
 
 @media (min-width: 768px) {
@@ -90,6 +92,8 @@
     background: var(--color-bg);
     color: var(--color-ink);
     font-family: var(--font-sans);
+    /* 回退字体按主字体 x-height 归一化，减小字体交换时的布局抖动 */
+    font-size-adjust: from-font;
     text-autospace: normal;
     text-spacing-trim: trim-start;
     font-size: var(--text-body);
@@ -147,16 +151,12 @@
     outline-offset: 3px;
   }
 
+  /* 减弱动态效果：只关掉大幅位移的动画，保留颜色等无关运动的过渡；
+     不用全局 animation-duration: 0.01ms 的一刀切写法。
+     各动画的 reduce 覆盖放在对应规则旁（层外规则优先于 @layer base） */
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
-    }
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
     }
   }
 }
@@ -262,6 +262,30 @@ html.js .reveal.is-in {
   transform: none;
 }
 
+/* 滚动驱动动画：支持 animation-timeline: view() 的浏览器直接用 CSS 完成入场，
+   JS 只在不受支持时回退到 IntersectionObserver */
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@supports ((animation-timeline: view()) and (animation-range: entry)) {
+  @media (prefers-reduced-motion: no-preference) {
+    html.js .reveal {
+      transition: none;
+      animation: reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html.js .reveal {
     opacity: 1;
@@ -327,6 +351,12 @@ html.js .reveal.is-in {
   }
   to {
     transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-line__in {
+    animation: none;
   }
 }
 
@@ -657,6 +687,25 @@ html.js .reveal.is-in {
   background: var(--color-accent);
 }
 
+/* 手风琴展开/收起动画：::details-content + interpolate-size 让 height: auto 可过渡，
+   content-visibility 用 allow-discrete 保证收起过程中内容仍可见；均为渐进增强 */
+@media (prefers-reduced-motion: no-preference) {
+  .faq-tile::details-content {
+    block-size: 0;
+    overflow: clip;
+    /* 让布局包含在开合两态保持一致，避免 content-visibility 切换引起抖动 */
+    contain: layout;
+    transition:
+      block-size 260ms var(--ease-out),
+      content-visibility 260ms var(--ease-out);
+    transition-behavior: allow-discrete;
+  }
+
+  .faq-tile[open]::details-content {
+    block-size: auto;
+  }
+}
+
 .faq-answer {
   padding: 0 24px 26px;
   max-width: 52ch;
@@ -767,28 +816,26 @@ html.js .reveal.is-in {
   }
 }
 
-.search-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 90;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 12vh 16px 24px;
-}
-
-.search-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgb(5 7 10 / 0.58);
-}
-
-.search-panel {
-  position: relative;
-  width: min(640px, 100%);
+/* 原生 <dialog> 模态：顶层渲染、焦点圈定、Esc 关闭都由浏览器负责 */
+.search-dialog {
+  width: min(640px, calc(100vw - 32px));
+  margin: 12vh auto auto;
+  padding: 0;
+  border: 0;
   background: var(--color-bg);
   color: var(--color-ink);
   box-shadow: 0 24px 80px rgb(5 7 10 / 0.28); /* fs-ignore: dialog overlay */
+}
+
+/* 阻止模态下方的页面跟着滚动（纯 CSS，不用 body overflow: hidden） */
+.search-dialog:modal {
+  overscroll-behavior: contain;
+}
+
+.search-dialog::backdrop {
+  background: rgb(5 7 10 / 0.58);
+  overflow: hidden;
+  overscroll-behavior: contain;
 }
 
 .search-field {
@@ -869,6 +916,13 @@ html.js .reveal.is-in {
 
 /* ---------- back to top ---------- */
 
+/* 滚动哨兵：不占布局，仅供 IntersectionObserver 回退使用 */
+.scroll-sentinel {
+  height: 0;
+  width: 0;
+  visibility: hidden;
+}
+
 .to-top {
   position: fixed;
   right: 20px;
@@ -881,20 +935,37 @@ html.js .reveal.is-in {
   background: var(--color-accent);
   color: var(--color-ink);
   border-radius: 0;
+  visibility: hidden;
   opacity: 0;
   transform: translate3d(0, 10px, 0);
-  pointer-events: none;
   transition:
+    visibility 220ms,
     opacity 220ms var(--ease-out),
     transform 220ms var(--ease-out),
     background-color 160ms var(--ease-out),
     color 160ms var(--ease-out);
 }
 
-.to-top.is-visible {
+/* 回退：不支持 scroll-state 查询的浏览器由 IO 哨兵切换 .scrolled */
+html.scrolled .to-top {
+  visibility: visible;
   opacity: 1;
   transform: none;
-  pointer-events: auto;
+}
+
+/* 首选：scroll-state 容器查询，纯 CSS 感知“已向下滚动”，无需 scroll 监听 */
+@supports (container-type: scroll-state) {
+  html {
+    container-type: scroll-state;
+  }
+
+  @container scroll-state(scrollable: top) {
+    .to-top {
+      visibility: visible;
+      opacity: 1;
+      transform: none;
+    }
+  }
 }
 
 .to-top:hover {
@@ -914,7 +985,9 @@ html.js .reveal.is-in {
 
 @media (prefers-reduced-motion: reduce) {
   .to-top {
-    transition: opacity 120ms linear;
+    transition:
+      opacity 120ms linear,
+      visibility 120ms;
     transform: none;
   }
 }

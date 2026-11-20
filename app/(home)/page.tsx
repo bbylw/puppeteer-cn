@@ -160,7 +160,7 @@ export default function HomePage() {
                     width={feature.width}
                     height={feature.height}
                     sizes="(max-width: 767px) 100vw, 50vw"
-                    loading={index === 0 ? 'eager' : 'lazy'}
+                    loading="lazy"
                     className="h-full w-full object-cover object-top"
                   />
                 </div>

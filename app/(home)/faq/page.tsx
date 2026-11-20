@@ -29,7 +29,7 @@ export default function FaqPage() {
         </p>
       </header>
 
-      <div className="mt-[clamp(40px,6vw,80px)] max-w-[820px]">
+      <section aria-label="常见问题" className="mt-[clamp(40px,6vw,80px)] max-w-[820px]">
         {faq.map((item, index) => (
           <details
             key={item.id}
@@ -45,7 +45,7 @@ export default function FaqPage() {
             <div className="faq-answer" dangerouslySetInnerHTML={{ __html: item.answer }} />
           </details>
         ))}
-      </div>
+      </section>
 
       <div className="reveal mt-[clamp(56px,8vw,100px)] grid gap-8 md:grid-cols-12">
         <p className="u-small text-muted md:col-span-3">还有问题</p>
