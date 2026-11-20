@@ -2,7 +2,7 @@ import puppeteer from 'puppeteer';
 import { mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 
-const outDir = new URL('../src/assets/shots/', import.meta.url);
+const outDir = new URL('../public/shots/', import.meta.url);
 const out = (name) => fileURLToPath(new URL(name, outDir));
 await mkdir(outDir, { recursive: true });
 

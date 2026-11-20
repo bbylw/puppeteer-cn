@@ -1,6 +1,10 @@
 node_modules/
 dist/
-.astro/
+out/
+.next/
+.source/
+next-env.d.ts
+*.tsbuildinfo
 .frontend-studio/
 *.log
 .DS_Store

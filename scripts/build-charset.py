@@ -4,12 +4,13 @@ import sys
 root = pathlib.Path(__file__).resolve().parent.parent
 chars = set()
 
-for p in (root / "src").rglob("*"):
-    if p.suffix in {".astro", ".ts", ".tsx", ".md", ".json", ".css"}:
-        try:
-            chars |= set(p.read_text(encoding="utf-8"))
-        except Exception:
-            pass
+for base in ("app", "components", "lib", "content"):
+    for p in (root / base).rglob("*"):
+        if p.suffix in {".ts", ".tsx", ".mdx", ".md", ".json", ".css"}:
+            try:
+                chars |= set(p.read_text(encoding="utf-8"))
+            except Exception:
+                pass
 
 # GB2312 first-level hanzi (3755 chars) as a safety net for future copy edits.
 for b1 in range(0xB0, 0xD8):
