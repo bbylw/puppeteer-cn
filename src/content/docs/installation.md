@@ -2,6 +2,7 @@
 title: 安装
 description: 在你的项目里安装 Puppeteer，理解浏览器下载、安装脚本被拦截时的处理办法，以及 puppeteer 与 puppeteer-core 的区别。
 order: 2
+category: introduction
 source: https://pptr.dev/guides/installation
 summary:
   - 一条 npm 命令，以及它顺手下载了什么
@@ -15,7 +16,7 @@ summary:
 npm i puppeteer
 ```
 
-安装 Puppeteer 时，它会自动下载一个较新的 [Chrome for Testing](https://developer.chrome.com/blog/chrome-for-testing/) 版本（macOS 约 170MB，Linux 约 282MB，Windows 约 280MB），以及一个 `chrome-headless-shell` 二进制（自 Puppeteer v21.6.0 起提供），这个组合[保证](https://pptr.dev/faq#q-why-doesnt-puppeteer-vxxx-work-with-a-certain-version-of-chrome-or-firefox)与 Puppeteer 兼容。浏览器默认下载到 `$HOME/.cache/puppeteer` 目录（自 Puppeteer v19.0.0 起）。配置项与控制下载行为的环境变量，见 [configuration](https://pptr.dev/api/puppeteer.configuration)。
+安装 Puppeteer 时，它会自动下载一个较新的 [Chrome for Testing](https://developer.chrome.com/docs/automation-and-testing/chrome-for-testing) 版本（macOS 约 170MB，Linux 约 282MB，Windows 约 280MB），以及一个 `chrome-headless-shell` 二进制（自 Puppeteer v21.6.0 起提供），这个组合[保证](/faq#version-mismatch)与 Puppeteer 兼容。浏览器默认下载到 `$HOME/.cache/puppeteer` 目录（自 Puppeteer v19.0.0 起）。配置项与控制下载行为的环境变量，见 [configuration](https://pptr.dev/api/puppeteer.configuration)。
 
 ## 自动下载可能被阻止
 
@@ -46,7 +47,7 @@ npm i puppeteer
 - [`puppeteer`](https://www.npmjs.com/package/puppeteer)
 - [`puppeteer-core`](https://www.npmjs.com/package/puppeteer-core)
 
-`puppeteer` 是一个**产品**，用于浏览器自动化。安装时它会下载一份 Chrome，然后通过 `puppeteer-core` 来驱动它。作为面向终端用户的产品，`puppeteer` 会使用合理的默认值自动完成一系列工作流，这些默认值[都可以自定义](https://pptr.dev/guides/configuration)。
+`puppeteer` 是一个**产品**，用于浏览器自动化。安装时它会下载一份 Chrome，然后通过 `puppeteer-core` 来驱动它。作为面向终端用户的产品，`puppeteer` 会使用合理的默认值自动完成一系列工作流，这些默认值[都可以自定义](/docs/configuration)。
 
 `puppeteer-core` 是一个**库**，用来驱动任何支持 DevTools 协议的东西。作为库，它完全通过编程接口驱动，不假定任何默认值，安装时也不会下载 Chrome。
 

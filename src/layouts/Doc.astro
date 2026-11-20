@@ -1,6 +1,7 @@
 ---
 import Base from './Base.astro';
 import { getCollection } from 'astro:content';
+import { docCategories } from '../data/docCategories';
 
 interface Heading {
   depth: number;
@@ -32,27 +33,35 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
   <div class="shell pt-10 pb-[clamp(72px,9vw,140px)] md:pt-14">
     <div class="grid gap-x-10 gap-y-12 md:grid-cols-12">
       <aside class="doc-sidebar hidden md:col-span-3 md:block">
-        <div class="md:sticky md:top-8">
-          <p class="u-small text-muted">入门</p>
-          <nav class="mt-4 flex flex-col" aria-label="文档目录">
-            {
-              entries.map((entry) => {
-                const href = `/docs/${entry.id}`;
-                const active = current === href;
-                return (
-                  <a
-                    href={href}
-                    class:list={['doc-nav-item', active && 'is-active']}
-                    aria-current={active ? 'page' : undefined}
-                  >
-                    {entry.data.title}
-                  </a>
-                );
-              })
-            }
-          </nav>
-          <p class="u-small mt-8 text-muted">更多</p>
-          <nav class="mt-4 flex flex-col" aria-label="其他页面">
+        <div class="md:sticky md:top-8 md:max-h-[calc(100vh-4rem)] md:overflow-y-auto md:pb-8">
+          {
+            docCategories.map((category) => {
+              const items = entries.filter((entry) => entry.data.category === category.key);
+              if (items.length === 0) return null;
+              return (
+                <div class="mt-7 first:mt-0">
+                  <p class="u-small text-muted">{category.label}</p>
+                  <nav class="mt-3 flex flex-col" aria-label={`${category.label}目录`}>
+                    {items.map((entry) => {
+                      const href = `/docs/${entry.id}`;
+                      const active = current === href;
+                      return (
+                        <a
+                          href={href}
+                          class:list={['doc-nav-item', active && 'is-active']}
+                          aria-current={active ? 'page' : undefined}
+                        >
+                          {entry.data.title}
+                        </a>
+                      );
+                    })}
+                  </nav>
+                </div>
+              );
+            })
+          }
+          <p class="u-small mt-7 text-muted">更多</p>
+          <nav class="mt-3 flex flex-col" aria-label="其他页面">
             <a
               href="/faq"
               class:list={['doc-nav-item', current === '/faq' && 'is-active']}
@@ -61,8 +70,8 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
             <a href="https://pptr.dev/api" target="_blank" rel="noreferrer" class="doc-nav-item">
               API 参考
             </a>
-            <a href="https://pptr.dev/webdriver-bidi" target="_blank" rel="noreferrer" class="doc-nav-item">
-              WebDriver BiDi
+            <a href="https://pptr.dev/CHANGELOG" target="_blank" rel="noreferrer" class="doc-nav-item">
+              更新日志
             </a>
           </nav>
         </div>
@@ -93,13 +102,24 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
           <div class="bg-surface px-5 pb-4">
             <nav class="flex flex-col" aria-label="移动端文档目录">
               {
-                entries.map((entry) => (
-                  <a href={`/docs/${entry.id}`} class="doc-nav-item">
-                    {entry.data.title}
-                  </a>
-                ))
+                docCategories.map((category) => {
+                  const items = entries.filter((entry) => entry.data.category === category.key);
+                  if (items.length === 0) return null;
+                  return (
+                    <div class="mt-4 first:mt-0">
+                      <p class="u-small text-muted">{category.label}</p>
+                      <div class="mt-1 flex flex-col">
+                        {items.map((entry) => (
+                          <a href={`/docs/${entry.id}`} class="doc-nav-item">
+                            {entry.data.title}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })
               }
-              <a href="/faq" class="doc-nav-item">
+              <a href="/faq" class="doc-nav-item mt-4">
                 常见问题
               </a>
             </nav>
@@ -152,7 +172,7 @@ const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
               <a class="link-underline" href={source} target="_blank" rel="noreferrer">
                 {source.replace('https://', '')}
               </a>
-              ，对应 Puppeteer v25.14.0
+              ，对应 Puppeteer v25.18.1
             </p>
           )
         }

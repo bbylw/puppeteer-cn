@@ -1,7 +1,7 @@
 export const site = {
   name: 'Puppeteer',
   nameZh: 'Puppeteer 中文文档',
-  version: '25.14.0',
+  version: '25.18.1',
   tagline: '用代码操纵浏览器',
   description:
     'Puppeteer 中文文档：一个 JavaScript 库，提供高级 API，通过 DevTools Protocol 或 WebDriver BiDi 控制 Chrome 与 Firefox，默认无头运行。',

@@ -2,6 +2,7 @@
 title: 系统要求
 description: Node 版本、TypeScript 版本，以及 Chrome for Testing 与 Firefox 在各平台上运行所需的系统依赖。
 order: 4
+category: introduction
 source: https://pptr.dev/guides/system-requirements
 summary:
   - Node 22.12+ 与 TypeScript 5.0.1+
