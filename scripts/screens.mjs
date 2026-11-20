@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer';
 import { mkdir } from 'node:fs/promises';
 
-const url = process.argv[2] ?? 'http://localhost:4321/';
+const url = process.argv[2] ?? 'http://localhost:3000/';
 const width = Number(process.argv[3] ?? 1440);
 const height = Number(process.argv[4] ?? 900);
 const prefix = process.argv[5] ?? 'desk';

@@ -1,0 +1,329 @@
+/*
+ * 站内营销页专用样式。
+ * 逐条搬自旧 Astro 文件里的 <style> 块（去掉 Astro 的 scoped / is:global / define:vars 语法，类名不变）：
+ *   - src/pages/index.astro      → .sec / .intro* / .fact* / .feature-panel / .how-* / .cta-*
+ *   - src/components/SiteHeader.astro → .link-plain / .mobile-menu
+ *   - src/components/Logo.astro    → .logo-mark（原 :global(.site-header[data-tone='dark']) 选择器展开为普通选择器）
+ * app/global.css 已有的共享样式（hero / walk / pixel / faq / search / to-top / reveal / btn /
+ * link-underline / shell / u-small 等）不在此重复。
+ */
+
+/* ---------- from src/pages/index.astro ---------- */
+
+.sec {
+  padding-block: clamp(64px, 6vw, 96px);
+}
+
+.intro-lead {
+  font-size: clamp(20px, 1.4vw + 13px, 26px);
+  line-height: 1.32;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+  color: var(--color-ink);
+  max-width: 20em;
+  text-wrap: balance;
+}
+
+.intro-copy p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--color-ink-soft);
+}
+
+.intro-copy {
+  font-size: 16px;
+  max-width: 36em;
+}
+
+/* fact list */
+.factlist {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.fact {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  padding-block: 14px;
+}
+
+.fact dt {
+  flex: 0 0 5.2em;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.fact dd {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.45;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* features */
+.feature-panel {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--color-field-2);
+}
+
+/* how strip */
+.how-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  min-height: 62svh;
+}
+
+.how-field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 26px 24px 30px;
+  min-height: 62svh;
+}
+
+.how-field--light {
+  background: #e3e1dc;
+  color: var(--color-ink);
+}
+.how-field--mid {
+  background: #aab3c4;
+  color: var(--color-field-1);
+}
+.how-field--deep {
+  background: #4a5878;
+  color: #fff;
+}
+.how-field--dark {
+  background: var(--color-field-1);
+  color: #fff;
+}
+
+.how-heading {
+  font-size: clamp(17px, 1.3vw, 20px);
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+}
+
+.how-card {
+  position: absolute;
+  top: 26%;
+  left: 50%;
+  width: 272px;
+  min-height: 152px;
+  translate: -50% 0;
+  background: #fff;
+  color: var(--color-ink);
+  transition: translate 180ms var(--ease-out);
+}
+
+.how-field:hover .how-card {
+  translate: -50% -6px;
+}
+
+.how-card__bar {
+  padding: 8px 10px;
+  background: #eef0f4;
+  font-family: var(--font-display);
+  font-size: 13px;
+  color: #5c6478;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.how-card__body {
+  padding: 16px 12px 22px;
+  min-height: 112px;
+}
+
+.how-blank {
+  display: block;
+  font-size: 13px;
+  color: #8b94a6;
+}
+
+.how-blank--closed {
+  color: #c2452f;
+}
+
+.how-page {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.how-page__title {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.how-page__line {
+  display: block;
+  height: 5px;
+  width: 86%;
+  background: #e3e6ed;
+}
+
+.how-page__line--short {
+  width: 54%;
+}
+
+.how-search {
+  display: block;
+  padding: 5px 7px;
+  background: #f2f3f6;
+  font-size: 13px;
+  color: #4b5365;
+}
+
+.how-result {
+  display: block;
+  font-size: 13px;
+  color: var(--color-ink);
+}
+
+.how-result--dim {
+  color: var(--color-muted);
+}
+
+.how-clause {
+  margin-top: auto;
+  padding-top: 24px;
+  font-size: clamp(18px, 1.8vw, 26px);
+  line-height: 1.22;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+  max-width: 9em;
+}
+
+.how-note {
+  margin-top: 8px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  opacity: 0.62;
+}
+
+@media (max-width: 900px) {
+  .how-strip {
+    grid-template-columns: 1fr;
+  }
+  .how-field {
+    min-height: 56svh;
+  }
+  .how-card {
+    position: static;
+    width: 100%;
+    max-width: 320px;
+    translate: none;
+    margin: 40px 0 0;
+  }
+  .how-field:hover .how-card {
+    translate: none;
+  }
+  .how-clause {
+    margin-top: 36px;
+    padding-top: 0;
+  }
+}
+
+/* cta */
+.cta-wrap {
+  padding-inline: 12px;
+  padding-bottom: clamp(56px, 7vw, 88px);
+}
+
+.cta-row {
+  display: grid;
+  grid-template-columns: 16vw 1fr 16vw;
+  gap: 12px;
+}
+
+.cta-side {
+  height: 340px;
+  overflow: hidden;
+}
+
+.cta-side--flat {
+  background: var(--color-field-2);
+}
+
+.cta-main {
+  height: 340px;
+  background: var(--color-accent);
+  color: var(--color-ink);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.cta-title {
+  font-size: clamp(28px, 3vw, 44px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-weight: 500;
+  max-width: 14ch;
+}
+
+.cta-body {
+  font-size: 16px;
+  line-height: 1.5;
+  max-width: 34ch;
+}
+
+@media (max-width: 900px) {
+  .cta-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .cta-main {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    height: auto;
+    min-height: 300px;
+    padding: 32px 24px;
+  }
+  .cta-side {
+    height: 150px;
+    grid-row: 2;
+  }
+}
+
+@media (max-width: 767px) {
+  .fact dt {
+    flex-basis: 4.6em;
+  }
+}
+
+/* ---------- from src/components/SiteHeader.astro ---------- */
+
+.link-plain {
+  position: relative;
+  transition: color 160ms ease;
+}
+.link-plain.is-current {
+  text-decoration: underline;
+  text-underline-offset: 0.35em;
+  text-decoration-thickness: 1px;
+}
+.mobile-menu[open] summary {
+  background: var(--color-accent);
+  color: var(--color-ink);
+}
+
+/* ---------- from src/components/Logo.astro ---------- */
+
+.logo-mark {
+  color: var(--color-ink);
+  flex: 0 0 auto;
+}
+
+.site-header[data-tone='dark'] .logo-mark {
+  color: var(--color-accent);
+}

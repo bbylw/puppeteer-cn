@@ -2,28 +2,28 @@
   "name": "puppeteer-zh",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "check": "astro check",
-    "typecheck": "tsc --noEmit"
+    "dev": "next dev",
+    "build": "next build",
+    "typecheck": "tsc --noEmit",
+    "postinstall": "fumadocs-mdx"
   },
   "dependencies": {
-    "@astrojs/react": "^7.1.0",
-    "astro": "^7.4.0",
-    "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "fumadocs-core": "16.19.5",
+    "fumadocs-mdx": "15.6.4",
+    "fumadocs-ui": "16.19.5",
+    "next": "16.4.6",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.10",
-    "@tailwindcss/vite": "^4.3.3",
+    "@tailwindcss/postcss": "4.3.5",
+    "@types/node": "^24.10.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "postcss": "^8.5.6",
     "puppeteer": "^25.18.1",
-    "tailwindcss": "^4.3.3",
+    "tailwindcss": "4.3.5",
     "typescript": "6.0.3"
   }
 }
