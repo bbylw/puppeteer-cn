@@ -103,6 +103,13 @@
     text-rendering: optimizeLegibility;
   }
 
+  /* 文档页暗色模式：把背景/前景交回 Fumadocs 主题变量（随 .dark 翻转），
+     否则上面固定的白底深字会盖住暗色主题。首页与亮色文档不受影响。 */
+  .dark body:has(#nd-docs-layout) {
+    background: var(--color-fd-background);
+    color: var(--color-fd-foreground);
+  }
+
   h1,
   h2,
   h3,
